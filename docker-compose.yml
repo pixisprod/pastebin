@@ -1,0 +1,58 @@
+services:
+  kafka:
+    image: bitnami/kafka:4.0.0
+    container_name: kafka
+    environment:
+      - KAFKA_CFG_NODE_ID=0
+      - KAFKA_CFG_PROCESS_ROLES=controller,broker
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka:9093
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+  api_gateway:
+    build:
+      context: api_gateway/
+      dockerfile: Dockerfile
+    container_name: api_gateway
+    ports:
+    - 8000:8000
+    depends_on:
+      - kafka
+
+  auth_service_db:
+    image: postgres:14
+    container_name: auth_service_db
+    environment:
+      - POSTGRES_USER=auth_service
+      - POSTGRES_PASSWORD=qwerty123
+      - POSTGRES_DB=db
+    restart: unless-stopped
+
+  auth_service:
+    build:
+      context: auth_service/
+      dockerfile: Dockerfile
+    container_name: auth_service
+    depends_on:
+      - auth_service_db
+      - kafka
+    restart: unless-stopped
+
+  paste_service_db:
+    image: postgres:14
+    container_name: paste_service_db
+    environment:
+      - POSTGRES_USER=paste_service
+      - POSTGRES_PASSWORD=qwerty123
+      - POSTGRES_DB=db
+    restart: unless-stopped
+  
+  paste_service:
+    build:
+      context: paste_service/
+      dockerfile: Dockerfile
+    container_name: paste_service
+    depends_on:
+      - paste_service_db
+      - kafka
+    restart: unless-stopped

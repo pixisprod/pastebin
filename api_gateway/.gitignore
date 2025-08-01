@@ -1,0 +1,5 @@
+.venv/
+.env
+__pycache__/
+api_gateway.egg-info/
+.DS_Store/
