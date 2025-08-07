@@ -2,7 +2,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
-from src.database import create_tables, drop_tables
+from src.database.core import create_tables
 from src import router, init_exc_handlers
 
 
