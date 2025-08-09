@@ -26,10 +26,24 @@ class KafkaSettings(BaseConfig):
     model_config = SettingsConfigDict(env_prefix='KAFKA_')
     server: str
 
+
+class AvroSettings(BaseConfig):
+    model_config = SettingsConfigDict(env_prefix='AVRO_')
+    SR_server: str
+
+
+class AppSettings(BaseConfig):
+    model_config = SettingsConfigDict(env_prefix='APP_')
+    service_state_key: str
+
+
+
 class Settings(BaseConfig):
     db: DatabaseSettings = Field(default_factory=DatabaseSettings)
     jwt: JwtSettings = Field(default_factory=JwtSettings)
     kafka: KafkaSettings = Field(default_factory=KafkaSettings)
+    avro: AvroSettings = Field(default_factory=AvroSettings)
+    app: AppSettings = Field(default_factory=AppSettings)
 
     @classmethod
     def load(cls):
