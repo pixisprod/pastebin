@@ -1,0 +1,8 @@
+{
+    "type": "record",
+    "namespace": "eventhub.user_registered",
+    "name": "value",
+    "fields": [
+        {"name": "email", "type": "string"}
+    ]
+}
