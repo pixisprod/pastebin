@@ -16,6 +16,7 @@ class DatabaseSettings(BaseConfig):
 class JwtSettings(BaseConfig):
     model_config = SettingsConfigDict(env_prefix='JWT_')
     secret_key: SecretStr
+    algorithm: str
     access_token_cookie_name: str
     refresh_token_cookie_name: str
     access_token_lifetime_seconds: int

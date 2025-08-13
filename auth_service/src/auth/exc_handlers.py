@@ -12,3 +12,7 @@ def init_handlers(app: FastAPI):
     @app.exception_handler(exceptions.UserIncorrectCredentialsException)
     async def user_incorrect_credentials_handler(request: Request, exc: Exception):
         return JSONResponse({'msg': str(exc)}, status.HTTP_401_UNAUTHORIZED)
+    
+    @app.exception_handler(exceptions.MissingTokenException)
+    async def missing_token_handler(request: Request, exc: Exception):
+        return JSONResponse({'msg': str(exc)}, status.HTTP_404_NOT_FOUND)

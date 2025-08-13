@@ -2,13 +2,25 @@ import datetime
 
 from jose import jwt
 
-from src.config import Settings
-
-
-config = Settings.load()
-
 
 class JwtManager:
+    def __init__(
+        self, 
+        secret_key: str, 
+        algorithm: str,
+        access_lifetime_sec: int,
+        refresh_lifetime_sec: int
+    ):
+        self.__secret_key = secret_key
+        self.__algorithm = algorithm
+        self.__access_lifetime = datetime.timedelta(
+            seconds=access_lifetime_sec,
+        )
+        self.__refresh_lifetime = datetime.timedelta(
+            seconds=refresh_lifetime_sec,
+        )
+    
+
     def __create_token(
         self,
         user_id: int,
@@ -25,10 +37,15 @@ class JwtManager:
             temp_payload.update(payload)
         return jwt.encode(
             claims=temp_payload,
-            algorithm='HS256',
-            key=config.jwt.secret_key.get_secret_value()
+            algorithm=self.__algorithm,
+            key=self.__secret_key,
         )
     
+
+    def decode_token(self, token: str) -> dict:
+        return jwt.decode(token, self.__secret_key, self.__algorithm)
+    
+
     def create_access_token(
         self,
         user_id: int,
@@ -38,7 +55,7 @@ class JwtManager:
         return self.__create_token(
             user_id=user_id,
             now=now,
-            lifetime=datetime.timedelta(seconds=config.jwt.access_token_lifetime_seconds),
+            lifetime=self.__access_lifetime,
             payload=payload,
         )
     
@@ -50,9 +67,5 @@ class JwtManager:
         return self.__create_token(
             user_id=user_id,
             now=now,
-            lifetime=datetime.timedelta(seconds=config.jwt.refresh_token_lifetime_seconds)
+            lifetime=self.__refresh_lifetime,
         )
-    
-    @classmethod
-    def load(cls):
-        return cls()
