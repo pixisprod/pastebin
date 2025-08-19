@@ -26,7 +26,7 @@ async def refresh_access_token(
     request: Request,
     jwt_manager: jwt_manager_dep,
     db: db_dep,
-    token=Cookie(default=None, alias=config.jwt.access_token_cookie_name),
+    token=Cookie(default=None, alias=config.jwt.refresh_token_cookie_name),
 ):
     if not token:
         raise exceptions.RefreshTokenNotFoundException()
@@ -41,9 +41,11 @@ async def refresh_access_token(
         db=db,
         jwt_manager=jwt_manager,
     )
-    msg = {'msg': 'Access token successfully refreshed'}
+    msg = {
+        'msg': 'Access token successfully refreshed',
+        'access_token': new_access_token
+    }
     response = JSONResponse(msg)
-    response.set_cookie(config.jwt.access_token_cookie_name, new_access_token)
     return response
 
 
@@ -77,15 +79,17 @@ async def login(
     user = await service.login_user(credentials, db)
     now = datetime.datetime.now(datetime.UTC)
     access_token = jwt_manager.create_access_token(
-        user_id = user.id,
+        user_id=user.id,
         now=now,
     )
     refresh_token = jwt_manager.create_refresh_token(
         user_id=user.id,
         now=now,
     )
-    msg = {'msg': 'Successful login'}
+    msg = {
+        'msg': 'Successful login',
+        'access_token': access_token
+    }
     response = JSONResponse(msg)
-    response.set_cookie(config.jwt.access_token_cookie_name, access_token)
     response.set_cookie(config.jwt.refresh_token_cookie_name, refresh_token)
     return response
