@@ -3,18 +3,22 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
-from src.database import create_tables, drop_tables
-from src.KafkaConsumer import KafkaConsumer
+from src.database.core import create_tables
 from src import router, init_handlers
+from src.config import Settings
+
+
+from src.database.PasteDAO import PasteDAO
+from src.paste.PasteService import PasteService
+
+
+config = Settings.load()
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await create_tables()
-    consumer = KafkaConsumer.load()
-    consumer_task = asyncio.create_task(consumer.start_consuming())
-    yield
-    await drop_tables()
+    yield {config.app.service_state_key: PasteService(PasteDAO())}
 
 app = FastAPI(
     title='[pastebin] Paste Service',

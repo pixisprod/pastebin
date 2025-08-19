@@ -4,8 +4,7 @@ import datetime
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, Select
 
-from schemas_lib.paste_service.PasteSchema import PasteSchema
-from schemas_lib.paste_service.PasteEditSchema import PasteEditSchema
+
 
 from src.models import OrmPaste
 from src.paste import exceptions
