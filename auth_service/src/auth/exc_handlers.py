@@ -1,18 +1,24 @@
 from fastapi import FastAPI, Request, status
 from fastapi.responses import JSONResponse
 
+from eventhub.auth.jwt import exceptions as jwtexc
+
 from src.auth import exceptions
 
 
+def register_handler(app: FastAPI, exc_type: type[Exception], status_code: int):
+    @app.exception_handler(exc_type)
+    async def handler(request: Request, exc: Exception):
+        return JSONResponse({'msg': str(exc)}, status_code=status_code)
+
+
 def init_handlers(app: FastAPI):
-    @app.exception_handler(exceptions.UserAlreadyExistsException)
-    async def user_already_exists_handler(request: Request, exc: Exception):
-        return JSONResponse({'msg': str(exc)}, status.HTTP_409_CONFLICT)
-    
-    @app.exception_handler(exceptions.UserIncorrectCredentialsException)
-    async def user_incorrect_credentials_handler(request: Request, exc: Exception):
-        return JSONResponse({'msg': str(exc)}, status.HTTP_401_UNAUTHORIZED)
-    
-    @app.exception_handler(exceptions.MissingTokenException)
-    async def missing_token_handler(request: Request, exc: Exception):
-        return JSONResponse({'msg': str(exc)}, status.HTTP_404_NOT_FOUND)
+    exceptions_mapping: dict[type[Exception], int] = {
+        exceptions.UserAlreadyExistsException: status.HTTP_409_CONFLICT,
+        exceptions.UserIncorrectCredentialsException: status.HTTP_401_UNAUTHORIZED,
+        exceptions.UserNotFoundException: status.HTTP_404_NOT_FOUND,
+        jwtexc.TokenMissingException: status.HTTP_401_UNAUTHORIZED
+    }
+
+    for exc, code in exceptions_mapping.items():
+        register_handler(app, exc, code)

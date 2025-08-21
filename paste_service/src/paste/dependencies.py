@@ -1,12 +1,16 @@
 from typing import Annotated
 
-from fastapi import Depends
+from fastapi import Depends, Request
 
-from src.paste.PasteRepository import PasteRepository
+from src.paste.service import PasteService
+from src.config import Settings
 
 
-async def get_paste_repository():
-    repository = PasteRepository()
-    return repository
+config = Settings.load()
 
-paste_repository_dep = Annotated[PasteRepository, Depends(get_paste_repository)]
+
+def get_service(request: Request):
+    service = getattr(request.state, config.app.service_state_key)
+    return service
+
+service_dep = Annotated[PasteService, Depends(get_service)]

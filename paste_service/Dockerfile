@@ -5,7 +5,6 @@ COPY pyproject.toml .
 RUN pip install --no-cache-dir .
 RUN pip install --no-cache-dir https://github.com/pixisprod/pastebin-eventhub/archive/refs/heads/main.zip
 
-COPY .env .
 COPY src/ src/
 
 EXPOSE 8002

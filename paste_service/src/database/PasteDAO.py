@@ -16,7 +16,20 @@ class PasteDAO:
             query = query.where(*filters)
         pastes = (await db.execute(query)).scalars().all()
         return pastes
-
+    
+    
+    async def get_paste_by_public_url(
+        self,
+        db: AsyncSession,
+        public_url: str,
+        filters: list,
+    ) -> OrmPaste | None:
+        query = select(OrmPaste).where(OrmPaste.public_url == public_url)
+        if filters:
+            query = query.where(*filters)
+        paste = (await db.execute(query)).scalar_one_or_none()
+        return paste
+    
 
     async def get_paste_by_id(
         self,

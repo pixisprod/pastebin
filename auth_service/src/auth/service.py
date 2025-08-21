@@ -4,10 +4,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import exc
 from passlib.context import CryptContext
 
-from eventhub.pydantic.auth_service.UserSchema import UserSchema
 from eventhub.topics import AuthTopics
 
-
+from src.auth.schemas import UserSchema
 from src.database.UserDAO import UserDAO
 from src.models import OrmUser
 from src.auth import exceptions

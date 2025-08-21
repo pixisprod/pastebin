@@ -1,20 +1,15 @@
 [project]
-name = "api_gateway"
+name = "paste_service"
 version = "0.1.0"
 description = "..."
 authors = [{name = "Jahongir", email = "jahongir.hodjaniyazov@gmail.com"}]
 requires-python = ">=3.13"
 dependencies = [
-    "fastapi ==0.116.1",
+    "aiofiles==24.1.0",
     "pydantic ==2.11.7",
-    "uvicorn ==0.35.0",
     "pydantic-settings ==2.10.1",
-    "aiokafka ==0.12.0",
-    "httpx ==0.28.1",
-    "python-jose ==3.5.0",
 ]
-
 
 [build-system]
 requires = ["setuptools", "wheel"]
-build-backend = "setuptools.build_meta"
+build_backend = "setuptools.build_meta"

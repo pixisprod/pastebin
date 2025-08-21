@@ -9,15 +9,31 @@ services:
       - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
       - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka:9093
       - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
-  api_gateway:
+
+
+  schemas_loader:
     build:
-      context: api_gateway/
+      context: ./schemas_loader
       dockerfile: Dockerfile
-    container_name: api_gateway
+    container_name: schemas_loader
+    env_file:
+      - ./.env
+    depends_on: 
+      - schema-registry
+  
+
+  schema-registry:
+    image: confluentinc/cp-schema-registry:latest
+    container_name: schema-registry
     ports:
-    - 8000:8000
+      - "8081:8081"
+    environment:
+      - SCHEMA_REGISTRY_HOST_NAME=schema-registry
+      - SCHEMA_REGISTRY_LISTENERS=http://0.0.0.0:8081
+      - SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS=PLAINTEXT://kafka:9092
     depends_on:
       - kafka
+
 
   auth_service_db:
     image: postgres:14
@@ -28,15 +44,21 @@ services:
       - POSTGRES_DB=db
     restart: unless-stopped
 
+
   auth_service:
     build:
-      context: auth_service/
+      context: ./auth_service
       dockerfile: Dockerfile
     container_name: auth_service
+    env_file:
+      - ./auth_service/.env
+      - ./.env
+    ports:
+      - 8000:8001
     depends_on:
       - auth_service_db
       - kafka
-    restart: unless-stopped
+
 
   paste_service_db:
     image: postgres:14
@@ -47,11 +69,17 @@ services:
       - POSTGRES_DB=db
     restart: unless-stopped
   
+  
   paste_service:
     build:
-      context: paste_service/
+      context: ./paste_service
       dockerfile: Dockerfile
     container_name: paste_service
+    env_file:
+      - ./paste_service/.env
+      - ./.env
+    ports:
+      - 9000:8002
     depends_on:
       - paste_service_db
       - kafka

@@ -2,33 +2,16 @@ import asyncio
 from contextlib import asynccontextmanager, AsyncExitStack
 
 from aiokafka.errors import KafkaConnectionError
-from fastapi import Request
 
 from eventhub.kafka.producer.Producer import Producer
 from eventhub.avro.SRAvroCodec import SRAvroCodec
 from eventhub.confluent.ConfluentSRClient import ConfluentSRClient
 
-from src.auth.AuthService import AuthService
+from src.auth.service import AuthService
 from src.auth.UserEventsPublisher import UserEventsPublisher
 from src.auth.security.bcrypt import get_bcrypt_hasher
 from src.database.UserDAO import UserDAO
 from src.config import Settings
-
-
-async def get_service_from_request(
-    request: Request,
-    service_key: str,
-) -> AuthService:
-    return getattr(request.state, service_key)
-
-
-@asynccontextmanager
-async def schema_registry_context(server: str):
-    try:
-        sr_client = ConfluentSRClient(server)
-        yield sr_client
-    finally:
-        await sr_client.close()
 
 
 async def safe_start_kafka_producer(producer: Producer) -> None:
@@ -39,6 +22,16 @@ async def safe_start_kafka_producer(producer: Producer) -> None:
         except KafkaConnectionError:
             print('(Kafka) Connection failed, retrying in 5 seconds..')
             await asyncio.sleep(5)
+
+
+@asynccontextmanager
+async def schema_registry_context(server: str):
+    try:
+        sr_client = ConfluentSRClient(server)
+        yield sr_client
+    finally:
+        await sr_client.close()
+
 
 @asynccontextmanager
 async def kafka_producer_context(loop: asyncio.AbstractEventLoop, server: str):

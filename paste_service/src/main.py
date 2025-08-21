@@ -1,4 +1,3 @@
-import asyncio
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -9,7 +8,7 @@ from src.config import Settings
 
 
 from src.database.PasteDAO import PasteDAO
-from src.paste.PasteService import PasteService
+from src.paste.service import PasteService
 
 
 config = Settings.load()

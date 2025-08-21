@@ -7,6 +7,10 @@ from contextlib import asynccontextmanager
 import aiofiles
 from eventhub.confluent.ConfluentSRClient import ConfluentSRClient
 
+from src.config import Settings
+
+
+config = Settings.load()
 
 SCHEMA_DIR = Path(__file__).parent.parent / 'schemas'
 
@@ -21,7 +25,7 @@ async def confluent_sr_context(server: str):
 
 
 async def main():
-    async with confluent_sr_context('http://schema-registry:8081') as sr_client:
+    async with confluent_sr_context(config.avro.sr_server) as sr_client:
         for path in SCHEMA_DIR.rglob('*.avsc'):
             event_type = path.parent.name
             key_type = path.stem

@@ -1,12 +1,9 @@
 from fastapi import Request
 
-from src.paste.PasteService import PasteService
+from src.paste.service import PasteService
 
 
-async def get_service_from_request(
-    request: Request,
-    service_key: str,
-) -> PasteService:
-    return getattr(request.state, service_key)
+def get_user_id_from_payload(payload: dict) -> int:
+    return int(payload.get('sub'))
 
 
