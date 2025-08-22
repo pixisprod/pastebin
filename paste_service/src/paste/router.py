@@ -16,7 +16,7 @@ config = Settings.load()
 
 
 router = APIRouter(
-    prefix='/pastes',
+    tags=['Paste 🗒️']
 )
 
 

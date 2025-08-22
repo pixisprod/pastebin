@@ -15,8 +15,7 @@ config = Settings.load()
 
 
 router = APIRouter(
-    prefix='/auth',
-    tags=['Auth'],
+    tags=['Auth 🔒'],
 )
 
 

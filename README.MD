@@ -1,16 +1,14 @@
-# 📦 PasteBin V1
+`Docs will be polished soon :)`
+# 📦 PasteBin V1.2
 **PasteBin** is a *high-performance*, *event-driven* pastebin service built with a clean **microservice architecture**.
 Each service is *fully isolated* and communicates through an asynchronous Kafka-based message system.
 The project provides creation, publication, and lifetime-controlled access to text-based pastes, along with user registration and authentication.
-
-It also includes a companion shared library — **schemas-lib** — which *provides centralized access* to data schemas and Kafka topics across all services.
 
 Thanks to its modular design, PasteBin is easily *scalable*, *extensible*, and *production-ready*.
 
 ## 🏗️ Architecture 
 ### 🧱 Services
 - **API Gateway** — responsible for distributing requests between services
-    - Validates users and transmits trusted data across services
 - **Auth Service** — responsible for user registration and login
     - Stores basic information about users
 - **Paste Service** — core service, responsible for the main work with pastes
@@ -55,4 +53,4 @@ cd pastebin
 ```
 docker-compose up --build
 ```
-The project will be available at `http://your.ip.address:8000/docs`
+The project will be available at `http://your.ip.address:8080/`

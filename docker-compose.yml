@@ -22,22 +22,20 @@ services:
       - schema-registry
   
 
-  schema-registry:
+  schema_registry:
     image: confluentinc/cp-schema-registry:latest
-    container_name: schema-registry
-    ports:
-      - "8081:8081"
+    container_name: schema_registry
     environment:
-      - SCHEMA_REGISTRY_HOST_NAME=schema-registry
+      - SCHEMA_REGISTRY_HOST_NAME=schema_registry
       - SCHEMA_REGISTRY_LISTENERS=http://0.0.0.0:8081
       - SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS=PLAINTEXT://kafka:9092
     depends_on:
       - kafka
 
 
-  auth_service_db:
+  auth_db:
     image: postgres:14
-    container_name: auth_service_db
+    container_name: auth_db
     environment:
       - POSTGRES_USER=auth_service
       - POSTGRES_PASSWORD=qwerty123
@@ -53,16 +51,14 @@ services:
     env_file:
       - ./auth_service/.env
       - ./.env
-    ports:
-      - 8000:8001
     depends_on:
       - auth_service_db
       - kafka
 
 
-  paste_service_db:
+  paste_db:
     image: postgres:14
-    container_name: paste_service_db
+    container_name: paste_db
     environment:
       - POSTGRES_USER=paste_service
       - POSTGRES_PASSWORD=qwerty123
@@ -78,9 +74,17 @@ services:
     env_file:
       - ./paste_service/.env
       - ./.env
-    ports:
-      - 9000:8002
     depends_on:
       - paste_service_db
       - kafka
+    restart: unless-stopped
+
+
+  gateway:
+    build:
+      context: ./nginx_gateway
+      dockerfile: Dockerfile
+    container_name: gateway
+    ports:
+      - 8080:80
     restart: unless-stopped
