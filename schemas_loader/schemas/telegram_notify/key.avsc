@@ -1,0 +1,8 @@
+{
+    "type": "record",
+    "namespace": "eventhub.telegram_notify",
+    "name": "key",
+    "fields": [
+        {"name": "id", "type": "int"}
+    ]
+}
