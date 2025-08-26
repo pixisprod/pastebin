@@ -19,7 +19,7 @@ services:
     env_file:
       - ./.env
     depends_on: 
-      - schema-registry
+      - schema_registry
   
 
   schema_registry:
@@ -52,7 +52,7 @@ services:
       - ./auth_service/.env
       - ./.env
     depends_on:
-      - auth_service_db
+      - auth_db
       - kafka
 
 
@@ -75,7 +75,7 @@ services:
       - ./paste_service/.env
       - ./.env
     depends_on:
-      - paste_service_db
+      - paste_db
       - kafka
     restart: unless-stopped
 
@@ -88,3 +88,11 @@ services:
     ports:
       - 8080:80
     restart: unless-stopped
+
+
+  # ngrok:
+  #   image: ngrok/ngrok:3.26.0-alpine
+  #   container_name: ngrok
+  #   environment:
+  #     - NGROK_AUTHTOKEN=${NGROK_AUTH_TOKEN}
+  #   restart: unless-stopped
