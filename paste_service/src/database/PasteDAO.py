@@ -1,7 +1,7 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.models import OrmPaste
+from src.database.models import OrmPaste
 
 
 class PasteDAO:

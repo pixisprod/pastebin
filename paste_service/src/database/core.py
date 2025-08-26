@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import (
 )
 
 from src.config import Settings
-from src.models import OrmBase
+from src.database.models import OrmBase
 
 
 config = Settings.load()

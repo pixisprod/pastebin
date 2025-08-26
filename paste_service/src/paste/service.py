@@ -7,7 +7,7 @@ from src.paste.schemas import (
     PasteSchema, PasteEditSchema
 )
 from src.database.PasteDAO import PasteDAO
-from src.models import OrmPaste
+from src.database.models import OrmPaste
 from src.paste import exceptions
 
 
