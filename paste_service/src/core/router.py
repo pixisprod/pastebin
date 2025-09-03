@@ -1,14 +1,14 @@
 from fastapi import APIRouter, Path, status
 from fastapi.responses import JSONResponse
 
-from src.paste.schemas import (
+from src.core.schemas import (
     PasteSchema, PastePublishSchema, PasteEditSchema
 )
-from src.paste.schemas import PasteOut
-from src.paste.dependencies import service_dep
+from src.core.schemas import PasteOut
+from src.core.dependencies import service_dep
 from src.database.dependencies import db_dep
-from src.paste.security.dependencies import user_dep
-from src.paste.utils import get_user_id_from_payload
+from src.core.security.dependencies import user_dep
+from src.core.utils import get_user_id_from_payload
 from src.config import Settings
 
 

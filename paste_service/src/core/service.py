@@ -3,19 +3,21 @@ import uuid
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.paste.schemas import (
+from src.core.messaging.producer import PasteProducer
+from src.core.schemas import (
     PasteSchema, PasteEditSchema
 )
 from src.database.PasteDAO import PasteDAO
 from src.database.models import OrmPaste
-from src.paste import exceptions
+from src.core import exceptions
 
 
 class PasteService:
-    def __init__(self, paste_dao: PasteDAO):
+    def __init__(self, paste_dao: PasteDAO, producer: PasteProducer):
         self.__paste_dao = paste_dao
+        self.__producer = producer
+        
 
-    
     def __get_default_filters(self) -> list:
         filters = []
         now = datetime.datetime.now(datetime.UTC)
@@ -160,6 +162,11 @@ class PasteService:
             paste.public_url = public_url
         try:
             await db.commit()
+            await self.__producer.paste_published(
+                user_id=paste.owner_id,
+                paste_id=paste.id,
+                public_url=paste.public_url,
+            )
             return paste.public_url
         except Exception:
             await db.rollback()

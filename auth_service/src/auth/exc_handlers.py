@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Request, status
 from fastapi.responses import JSONResponse
 
-from eventhub.auth.jwt import exceptions as jwtexc
+from lib.auth.jwt import exceptions as jwtexc
 
 from src.auth import exceptions
 

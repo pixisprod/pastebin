@@ -2,9 +2,9 @@ import jose
 from fastapi import FastAPI, Request, status
 from fastapi.responses import JSONResponse
 
-from eventhub.auth.jwt import exceptions as token_exceptions
+from lib.auth.jwt import exceptions as token_exceptions
 
-from src.paste import exceptions as paste_exceptions
+from src.core import exceptions as paste_exceptions
 
 
 def register_handler(app: FastAPI, exc_type: type[Exception], status_code: int):

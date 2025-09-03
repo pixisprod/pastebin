@@ -7,11 +7,12 @@ class BaseConfig(BaseSettings):
 
 
 class DatabaseSettings(BaseConfig):
-    model_config = SettingsConfigDict(env_prefix='DB_')
+    model_config = SettingsConfigDict(env_prefix='AUTH_DB_')
     host: str
     user: SecretStr
     password: SecretStr
     name: str
+
 
 class JwtSettings(BaseConfig):
     model_config = SettingsConfigDict(env_prefix='JWT_')
@@ -20,16 +21,6 @@ class JwtSettings(BaseConfig):
     refresh_token_cookie_name: str
     access_token_lifetime_seconds: int
     refresh_token_lifetime_seconds: int
-
-
-class KafkaSettings(BaseConfig):
-    model_config = SettingsConfigDict(env_prefix='KAFKA_')
-    server: str
-
-
-class AvroSettings(BaseConfig):
-    model_config = SettingsConfigDict(env_prefix='AVRO_')
-    SR_server: str
 
 
 class AppSettings(BaseConfig):
@@ -41,8 +32,6 @@ class AppSettings(BaseConfig):
 class Settings(BaseConfig):
     db: DatabaseSettings = Field(default_factory=DatabaseSettings)
     jwt: JwtSettings = Field(default_factory=JwtSettings)
-    kafka: KafkaSettings = Field(default_factory=KafkaSettings)
-    avro: AvroSettings = Field(default_factory=AvroSettings)
     app: AppSettings = Field(default_factory=AppSettings)
 
     @classmethod

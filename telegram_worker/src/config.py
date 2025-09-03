@@ -1,4 +1,4 @@
-from pydantic import Field
+from pydantic import Field, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -6,13 +6,14 @@ class BaseConfig(BaseSettings):
     model_config = SettingsConfigDict(extra='ignore')
 
 
-class AvroSettings(BaseConfig):
-    model_config = SettingsConfigDict(env_prefix='AVRO_')
-    sr_server: str
+class KafkaSettings(BaseConfig):
+    model_config = SettingsConfigDict(env_prefix='KAFKA_')
+    server: str
+    server_port: int
 
 
 class Settings(BaseConfig):
-    avro: AvroSettings = Field(default_factory=AvroSettings)
+    kafka: KafkaSettings = Field(default_factory=KafkaSettings)
 
     @classmethod
     def load(cls):

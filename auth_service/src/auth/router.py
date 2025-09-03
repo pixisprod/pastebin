@@ -3,7 +3,7 @@ import datetime
 from fastapi import APIRouter, status, Cookie
 from fastapi.responses import JSONResponse
 
-from eventhub.auth.jwt import exceptions
+from lib.auth.jwt import exceptions
 
 from src.auth.schemas import UserSchema
 from src.auth.dependencies import jwt_manager_dep, service_dep

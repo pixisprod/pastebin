@@ -1,8 +1,0 @@
-{
-    "type": "record",
-    "namespace": "eventhub.user_registered",
-    "name": "key",
-    "fields": [
-        {"name": "id", "type": "int"}
-    ]
-}

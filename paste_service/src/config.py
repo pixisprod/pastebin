@@ -7,16 +7,11 @@ class BaseConfig(BaseSettings):
 
 
 class DatabaseSettings(BaseConfig):
-    model_config = SettingsConfigDict(env_prefix='DB_')
+    model_config = SettingsConfigDict(env_prefix='PASTE_DB_')
     host: str
     user: SecretStr
     password: SecretStr
     name: str
-
-
-class KafkaSettings(BaseConfig):
-    model_config = SettingsConfigDict(env_prefix='KAFKA_')
-    server: str
 
 
 class AppSettings(BaseConfig):
@@ -40,11 +35,17 @@ class JwtSettings(BaseConfig):
     algorithm: str
 
 
+class KafkaSettings(BaseConfig):
+    model_config = SettingsConfigDict(env_prefix='KAFKA_')
+    server: str
+    server_port: int
+
+
 class Settings(BaseConfig):
     db: DatabaseSettings = Field(default_factory=DatabaseSettings)
-    kafka: KafkaSettings = Field(default_factory=KafkaSettings)
     app: AppSettings = Field(default_factory=AppSettings)
     paste: PasteSettings = Field(default_factory=PasteSettings)
+    kafka: KafkaSettings = Field(default_factory=KafkaSettings)
     jwt: JwtSettings = Field(default_factory=JwtSettings)
 
     @classmethod

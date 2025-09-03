@@ -22,7 +22,7 @@ class PasteDAO:
         self,
         db: AsyncSession,
         public_url: str,
-        filters: list,
+        filters: list = None,
     ) -> OrmPaste | None:
         query = select(OrmPaste).where(OrmPaste.public_url == public_url)
         if filters:

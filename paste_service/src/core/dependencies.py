@@ -2,7 +2,7 @@ from typing import Annotated
 
 from fastapi import Depends, Request
 
-from src.paste.service import PasteService
+from src.core.service import PasteService
 from src.config import Settings
 
 

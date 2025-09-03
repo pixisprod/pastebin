@@ -14,10 +14,9 @@ config = Settings.load()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    loop = asyncio.get_event_loop()
-    async with setup_auth_service(loop, config) as auth_service:
-        await create_tables()
-        yield {config.app.service_state_key: auth_service}
+    await create_tables()
+    auth_service = setup_auth_service()
+    yield {config.app.service_state_key: auth_service}
 
 
 app = FastAPI(

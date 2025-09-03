@@ -4,14 +4,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import exc
 from passlib.context import CryptContext
 
-from eventhub.topics import AuthTopics
-
 from src.auth.schemas import UserSchema
 from src.database.UserDAO import UserDAO
 from src.models import OrmUser
 from src.auth import exceptions
 from src.auth.security.JwtManager import JwtManager
-from src.auth.UserEventsPublisher import UserEventsPublisher
 
 
 class AuthService:
@@ -19,11 +16,9 @@ class AuthService:
             self, 
             user_dao: UserDAO, 
             hasher: CryptContext,
-            event_publisher: UserEventsPublisher,
     ):
         self.__user_dao = user_dao
         self.__hasher = hasher
-        self.event_publisher = event_publisher 
     
 
     async def register_user(
@@ -42,12 +37,6 @@ class AuthService:
         except Exception:
             await db.rollback()
             raise
-        topic = AuthTopics.UserRegistered
-        await self.event_publisher.publish_registered(
-            user_id=new_user.id,
-            user_email=new_user.email,
-            topic=str(topic),
-        )
         return new_user.id 
 
 

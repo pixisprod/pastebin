@@ -1,5 +1,5 @@
 [project]
-name = "notification_service"
+name = "paste_service"
 version = "0.1.0"
 description = "..."
 authors = [{name = "Jahongir", email = "jahongir.hodjaniyazov@gmail.com"}]
@@ -12,6 +12,7 @@ dependencies = [
     "uvicorn ==0.35.0", 
     "asyncpg ==0.30.0",
     "python-jose ==3.5.0",
+    "aiokafka ==0.12.0",
 ]
 
 [build-system]

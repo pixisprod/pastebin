@@ -1,45 +1,24 @@
 services:
   kafka:
     image: bitnami/kafka:4.0.0
-    container_name: kafka
+    container_name: ${KAFKA_SERVER}
     environment:
-      - KAFKA_CFG_NODE_ID=0
+      - KAFKA_CFG_KAFKA_CLUSTER_ID=${KAFKA_CLUSTER_ID}
+      - KAFKA_CFG_NODE_ID=${KAFKA_NODE_ID}
       - KAFKA_CFG_PROCESS_ROLES=controller,broker
-      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:${KAFKA_SERVER_PORT},CONTROLLER://:${KAFKA_CONTROLLER_PORT}
       - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
-      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka:9093
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=${KAFKA_NODE_ID}@${KAFKA_SERVER}:${KAFKA_CONTROLLER_PORT}
       - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
-
-
-  schemas_loader:
-    build:
-      context: ./schemas_loader
-      dockerfile: Dockerfile
-    container_name: schemas_loader
-    env_file:
-      - ./.env
-    depends_on: 
-      - schema_registry
-  
-
-  schema_registry:
-    image: confluentinc/cp-schema-registry:latest
-    container_name: schema_registry
-    environment:
-      - SCHEMA_REGISTRY_HOST_NAME=schema_registry
-      - SCHEMA_REGISTRY_LISTENERS=http://0.0.0.0:8081
-      - SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS=PLAINTEXT://kafka:9092
-    depends_on:
-      - kafka
 
 
   auth_db:
     image: postgres:14
     container_name: auth_db
     environment:
-      - POSTGRES_USER=auth_service
-      - POSTGRES_PASSWORD=qwerty123
-      - POSTGRES_DB=db
+      - POSTGRES_USER=${AUTH_DB_USER}
+      - POSTGRES_PASSWORD=${AUTH_DB_PASSWORD}
+      - POSTGRES_DB=${AUTH_DB_NAME}
     restart: unless-stopped
 
 
@@ -49,20 +28,19 @@ services:
       dockerfile: Dockerfile
     container_name: auth_service
     env_file:
-      - ./auth_service/.env
       - ./.env
     depends_on:
       - auth_db
-      - kafka
+    restart: unless-stopped
 
 
   paste_db:
     image: postgres:14
     container_name: paste_db
     environment:
-      - POSTGRES_USER=paste_service
-      - POSTGRES_PASSWORD=qwerty123
-      - POSTGRES_DB=db
+      - POSTGRES_USER=${PASTE_DB_USER}
+      - POSTGRES_PASSWORD=${PASTE_DB_PASSWORD}
+      - POSTGRES_DB=${PASTE_DB_NAME}
     restart: unless-stopped
   
   
@@ -72,13 +50,34 @@ services:
       dockerfile: Dockerfile
     container_name: paste_service
     env_file:
-      - ./paste_service/.env
       - ./.env
     depends_on:
       - paste_db
       - kafka
     restart: unless-stopped
 
+
+  notification_db:
+    image: postgres:14
+    container_name: notification_db
+    environment:
+      - POSTGRES_USER=${NOTIFICATION_DB_USER}
+      - POSTGRES_PASSWORD=${NOTIFICATION_DB_PASSWORD}
+      - POSTGRES_DB=${NOTIFICATION_DB_NAME}
+    restart: unless-stopped
+
+
+  notification_service:
+    build:
+      context: ./notification_service
+      dockerfile: Dockerfile
+    container_name: notification_service
+    env_file:
+      - ./.env
+    depends_on:
+      - notification_db
+      - kafka
+    restart: unless-stopped
 
   gateway:
     build:
@@ -89,10 +88,16 @@ services:
       - 8080:80
     restart: unless-stopped
 
-
-  # ngrok:
-  #   image: ngrok/ngrok:3.26.0-alpine
-  #   container_name: ngrok
-  #   environment:
-  #     - NGROK_AUTHTOKEN=${NGROK_AUTH_TOKEN}
-  #   restart: unless-stopped
+  
+  telegram_worker:
+    build:
+      context: ./telegram_worker
+      dockerfile: Dockerfile
+    container_name: telegram_worker
+    environment:
+      - PYTHONUNBUFFERED=1
+    env_file:
+      - ./.env
+    depends_on:
+      - kafka
+    restart: unless-stopped
