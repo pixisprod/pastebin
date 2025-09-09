@@ -5,6 +5,7 @@ from aiogram.enums import ParseMode
 from aiogram.filters import CommandStart
 
 from src.config import Settings
+from src.bot.keyboards import get_start_keyboard
 
 
 config = Settings.load()
@@ -19,4 +20,7 @@ dp = Dispatcher()
 
 @dp.message(CommandStart())
 async def start(message: Message) -> None:
-    await message.answer(f'Hello **{message.from_user.full_name}** from PasteBin')
+    await message.answer(
+        text=f'Hello **{message.from_user.full_name}** from PasteBin',
+        reply_markup=get_start_keyboard(False),
+    )

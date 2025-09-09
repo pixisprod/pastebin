@@ -22,6 +22,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title='[pastebin] Auth Service',
     lifespan=lifespan,
+    root_path='/auth',
 )
 
 
