@@ -24,7 +24,6 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title='[pastebin] Paste Service',
     lifespan=lifespan,
-    root_path='/paste'
 )
 
 init_handlers(app)
