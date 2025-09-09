@@ -79,6 +79,7 @@ services:
       - kafka
     restart: unless-stopped
 
+
   gateway:
     build:
       context: ./nginx_gateway
@@ -101,3 +102,13 @@ services:
     depends_on:
       - kafka
     restart: unless-stopped
+
+
+  ngrok:
+    image: ngrok/ngrok:3-alpine
+    command: start --none
+    environment:
+      - NGROK_AUTHTOKEN=${NGROK_AUTH_TOKEN}
+
+  
+  
