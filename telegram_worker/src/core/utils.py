@@ -5,14 +5,17 @@ from httpx import AsyncClient
 
 from src.core.messaging.consumer import TelegramConsumer
 from src.core.ngrok.manager import NgrokManager
+from src.bot.core import bot
 
 
 def setup_consumer(kafka_server: str) -> TelegramConsumer:
-    consumer = TelegramConsumer(
-        consumer=AIOKafkaConsumer(
+    low_lvl_consumer = AIOKafkaConsumer(
             'workers.telegram',
             bootstrap_servers=kafka_server,
-        ),
+        )
+    consumer = TelegramConsumer(
+        consumer=low_lvl_consumer,
+        tg_bot=bot,
     )
     return consumer
 

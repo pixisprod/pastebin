@@ -9,7 +9,20 @@ class NotificationProducer:
         self.__base_topic =  topic
 
 
-    async def produce(
+    async def send_telegram(
+        self,
+        telegram_user_id: int,
+        message: str,
+    ):
+        await self.__produce(
+            user_id=telegram_user_id,
+            message=message,
+            channel='telegram',
+            event='sent',
+        )
+
+
+    async def __produce(
         self,
         user_id: int,
         message: str,

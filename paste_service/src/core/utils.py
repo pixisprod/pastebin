@@ -1,6 +1,8 @@
+import asyncio
 from contextlib import asynccontextmanager
 
 from aiokafka import AIOKafkaProducer
+from aiokafka.errors import KafkaConnectionError
 
 from lib.kafka.producer import AioProducer
 
@@ -21,7 +23,13 @@ def get_user_id_from_payload(payload: dict) -> int:
 async def aiokafka_context(server: str):
     producer = AIOKafkaProducer(bootstrap_servers=server)
     try:
-        await producer.start()
+        while True:
+            try:
+                await producer.start()
+                break
+            except KafkaConnectionError:
+                print('Unable to connect to kafka retrying in 5 seconds..')
+                await asyncio.sleep(5)
         yield producer
     finally:
         await producer.stop()

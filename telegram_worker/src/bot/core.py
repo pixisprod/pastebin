@@ -1,11 +1,12 @@
 from aiogram import Dispatcher, Bot
 from aiogram.client.default import DefaultBotProperties
-from aiogram.types import Message
 from aiogram.enums import ParseMode
-from aiogram.filters import CommandStart
 
 from src.config import Settings
-from src.bot.keyboards import get_start_keyboard
+from src.bot.handlers import router
+from src.bot.middlewares import RedisMiddleware, HttpMiddleware
+from src.core.redis import redis_conn
+from src.core.http import client
 
 
 config = Settings.load()
@@ -16,11 +17,6 @@ bot = Bot(
     default=DefaultBotProperties(parse_mode=ParseMode.MARKDOWN)
 )
 dp = Dispatcher()
-
-
-@dp.message(CommandStart())
-async def start(message: Message) -> None:
-    await message.answer(
-        text=f'Hello **{message.from_user.full_name}** from PasteBin',
-        reply_markup=get_start_keyboard(False),
-    )
+dp.include_router(router)
+dp.update.middleware(RedisMiddleware(redis_conn))
+dp.update.middleware(HttpMiddleware(client))

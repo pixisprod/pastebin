@@ -7,6 +7,7 @@ from src.config import Settings
 from src.core.utils import setup_consumer, ngrok_manager
 from src.bot.core import bot
 from src.core import api_router
+from src.core.http import client
 
 
 config = Settings.load()
@@ -30,6 +31,7 @@ async def lifespan(app: FastAPI):
         yield
     finally:
         await bot.session.close()
+        await client.aclose()
 
 
 app = FastAPI(

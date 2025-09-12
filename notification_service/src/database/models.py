@@ -18,7 +18,7 @@ class OrmTelegramChannel(OrmBase):
         nullable=False,
         unique=True,
     )
-    user_id: Mapped[int] = mapped_column(
+    telegram_id: Mapped[int] = mapped_column(
         Integer,
         index=True,
         unique=True,

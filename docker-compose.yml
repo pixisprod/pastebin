@@ -27,6 +27,8 @@ services:
       context: ./auth_service
       dockerfile: Dockerfile
     container_name: auth_service
+    environment:
+      - PYTHONUNBUFFERED=1
     env_file:
       - ./.env
     depends_on:
@@ -49,6 +51,8 @@ services:
       context: ./paste_service
       dockerfile: Dockerfile
     container_name: paste_service
+    environment:
+      - PYTHONUNBUFFERED=1
     env_file:
       - ./.env
     depends_on:
@@ -72,6 +76,8 @@ services:
       context: ./notification_service
       dockerfile: Dockerfile
     container_name: notification_service
+    environment:
+      - PYTHONUNBUFFERED=1
     env_file:
       - ./.env
     depends_on:
@@ -85,9 +91,16 @@ services:
       context: ./nginx_gateway
       dockerfile: Dockerfile
     container_name: gateway
+    depends_on:
+      - notification_service
+      - auth_service
+      - paste_service
     ports:
       - 8080:80
     restart: unless-stopped
+
+  redis:
+    image: redis:8.2.1-alpine
 
   
   telegram_worker:
